@@ -1,13 +1,37 @@
-#include "Board.h"
+/**
+ * Name: ConRad Sadler
+ * Project: Project Life Computer Science 1300
+ * Date: 11/22/2024
+ */
 
-bool play()
+# include "Game.h";
+
+Game::Game()
+{
+    winner = "";
+}
+
+void Game::setWinner(string player)
+{
+    winner = player;
+}
+        
+string Game::getWinner()
+{
+    return winner;
+}
+
+/**
+ * This function plays the game. This function is not complete and needs to be borken up becasue it is too long.
+ */
+bool Game::play()
 {
     string userInput;
     int numPlayers;
     cout << "Enter The Number of Players:" << endl;
     getline(cin,userInput);
     userInput.erase(remove_if(userInput.begin(), userInput.end(), ::isspace),userInput.end());
-    try
+    try //if stoi fails becasue the user inou was invalid the program will not crash
     {
         numPlayers = stoi(userInput);
     }
@@ -16,7 +40,8 @@ bool play()
         printf("Invalid user input. Default set to two players\n");
         numPlayers = 2;
     }
-    Board playingBoard = Board(numPlayers);
+    Board playingBoard = Board(numPlayers);  // initializing Board
+    
     for(int i = 0; i < numPlayers; i++)
     {
         if(playingBoard.chooseCharacter() == false)
@@ -26,7 +51,7 @@ bool play()
 
         printf("Does Player %d Wish To Go To:\nA: Cub Training\nB: Straight to the Pride Lands\nEnter 'A' for choice A or 'B' for choice B\n", i);
         bool validInput = false;
-
+            //This loop will continue unit the user makes a decision on what path to take
         while(validInput == false && getline(cin,userInput))
         {
             if(tolower(userInput[0]) == 'a')
@@ -72,8 +97,10 @@ bool play()
         }
 
     }
+
     int decidingFirstPlayer = playingBoard.spin()%4;
     int playerTurn = 0;
+        //using random numbers to see what player will start the game
     if(decidingFirstPlayer == 0)
     {
         decidingFirstPlayer = 4;
@@ -87,10 +114,13 @@ bool play()
         cout << "\n*** Player 2 Starts The Game ***\n" << endl;
         playerTurn = 1;
     }
+        // end of using random numbers to see what player will start the game
+     
     int playerDesicion = 0;
+        //game playing loop
     while(playingBoard.getPlayerPosition(0) != 51 || playingBoard.getPlayerPosition(0) != 51)
     {
-        if(playingBoard.getPlayerPosition(0) == 51)
+        if(playingBoard.getPlayerPosition(0) == 51)  // if player one has reached the "finish line", then only let player two move
         {
             playerDesicion = 0;
             while(playerDesicion != 5)
@@ -103,7 +133,7 @@ bool play()
             playerTurn = 1;
             playingBoard.displayBoard();
         }
-        else if(playingBoard.getPlayerPosition(1) == 51)
+        else if(playingBoard.getPlayerPosition(1) == 51)  // if player two has reached the "finish line", then only let player one move
         {
             playerDesicion = 0;
             while(playerDesicion != 5)
@@ -116,7 +146,7 @@ bool play()
             playerTurn = 0;
             playingBoard.displayBoard();
         }
-        else
+        else //if both players have not reached the finish line, then alternate turns
         {
             playerDesicion = 0;
             while(playerDesicion != 5)
@@ -130,11 +160,5 @@ bool play()
             playingBoard.displayBoard();
         }
     }
-    return true;
-    
-}
-
-int main()
-{
-    play();
+    return true;  
 }
