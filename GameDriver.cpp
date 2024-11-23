@@ -1,3 +1,5 @@
+#include "Game.h"
+
 /**
  * Name: ConRad Sadler
  * Project: Project Life Computer Science 1300
@@ -5,7 +7,6 @@
  * 
  * Description: Driver file
  */
-#include "Game.h"
 
 int main()
 {
