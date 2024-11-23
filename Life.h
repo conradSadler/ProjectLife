@@ -1,17 +1,16 @@
-/**
- * Name: ConRad Sadler
- * Project: Project Life Computer Science 1300
- * Date: 11/22/2024
- */
-
 #include <string>
 #include <fstream>
 #include <iostream>
 using namespace std;
 
-
 #ifndef LIFE_H
 #define LIFE_H
+
+/**
+ * Name: ConRad Sadler
+ * Project: Project Life Computer Science 1300
+ * Date: 11/22/2024
+ */
 
 class Life
 {

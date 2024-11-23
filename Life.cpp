@@ -1,10 +1,10 @@
+#include "Life.h"
+
 /**
  * Name: ConRad Sadler
  * Project: Project Life Computer Science 1300
  * Date: 11/22/2024
  */
-
-#include "Life.h"
 
 //private functions
 /**

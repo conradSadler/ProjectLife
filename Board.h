@@ -1,15 +1,14 @@
-/**
- * Name: ConRad Sadler
- * Project: Project Life Computer Science 1300
- * Date: 11/22/2024
- */
-
 #include "Tile.h"
 #include "Life.h"
 
 #ifndef BOARD_H
 #define BOARD_H
 
+/**
+ * Name: ConRad Sadler
+ * Project: Project Life Computer Science 1300
+ * Date: 11/22/2024
+ */
 
 class Board
 {
