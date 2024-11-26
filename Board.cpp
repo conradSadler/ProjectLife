@@ -448,7 +448,7 @@ void Board::setTrack(int track, int player_index)
  * Description: This function displays the user menu and gets the users input, which is between 1 and 5.
  * @return the integer that the user entered, unless the user entered 'E' or 'e' which will return -1(unsuccessful)
  */
-int Board::playerMenu()
+int playerMenu()
 {
     bool validInput = false;
     string userInput;

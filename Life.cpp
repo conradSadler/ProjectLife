@@ -155,6 +155,10 @@ string Life::getAdvisor()
 {
     return advisor;
 }
+int Life::getAdvisorNumber()
+{
+    return advisorNumber;
+}
 // end of getters
 
 //setters
@@ -221,6 +225,12 @@ void Life:: toPrideLands()
 }
 
 /**
+|Option|Advisors| Description                                                                    |
+|   1  |Rafiki  | Invisibility (the ability to become un-seen)                                   |
+|   2  |Nala    | Night Vision (the ability to see clearly in darkness)                          |
+|   3  |Sarabi  | Energy Manipulation (the ability to shape and control the properties of energy)|
+|   4  |Zazu    | Weather Control (the ability to influence and manipulate weather patterns)     |
+|   5  |Sarafina| Super Speed (the ability to run 4x faster than the maximum speed of lions)     |
  * Description: This function prints the contents of advisors.txt and lets the user decide what advisor they want to have
  */
 void Life::setAdvisor()
@@ -252,23 +262,28 @@ void Life::setAdvisor()
                     validInput = true;
                     break;
                 case '1':
-                    advisor = "Rafiki";
+                    advisor = "Rafiki | Invisibility (the ability to become un-seen)";
+                    advisorNumber = 1;
                     validInput = true;
                     break;
                 case '2':
-                    advisor = "Nala";
+                    advisor = "Nala | Night Vision (the ability to see clearly in darkness)";
+                    advisorNumber = 2;
                     validInput = true;
                     break;
                 case '3':
-                    advisor = "Sarabi";
+                    advisor = "Sarabi | Energy Manipulation (the ability to shape and control the properties of energy)";
+                    advisorNumber = 3;
                     validInput = true;
                     break;
                 case '4':
-                    advisor = "Zazu";
+                    advisor = "Zazu | Weather Control (the ability to influence and manipulate weather patterns)";
+                    advisorNumber = 4;
                     validInput = true;
                     break;
                 case '5':
-                    advisor = "Sarafina";
+                    advisor = "Sarafina | Super Speed (the ability to run 4x faster than the maximum speed of lions)";
+                    advisorNumber = 5;
                     validInput = true;
                     break;
                 default:

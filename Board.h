@@ -37,7 +37,6 @@ public:
     bool chooseCharacter();
     int getPlayerPosition(int player_index) const;
     int spin();
-    int playerMenu();
     Life getPlayer(int);
 };
 
