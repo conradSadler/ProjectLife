@@ -1,4 +1,4 @@
-# include "Game.h";
+# include "Game.h"
 
 /**
  * Name: ConRad Sadler
@@ -36,7 +36,14 @@ int parseUserInputInteger()
             return -1;
         }
     }
-    return stoi(userInput);
+    if(userInput.length() == 0)
+    {
+        return -1;
+    }
+    else
+    {
+        return stoi(userInput);
+    }
 }
 
 char parseUserInput()
@@ -64,10 +71,10 @@ char parseUserInput()
 int playerMenu()
 {
     bool validInput = false;
-    char userInput;
+    int userInput = 0;
     while(!validInput)
     {
-        system("clear");
+        //system("clear");
         cout << "  --- Player Menu ---  |Options|" << endl;
         cout << "Check Player Progress: |   1   |" << endl;
         cout << "Review Character:      |   2   |" << endl;
@@ -76,14 +83,13 @@ int playerMenu()
         cout << "Move Forward:          |   5   |" << endl;
         cout << "\nEnter Valid Option: " << endl;
         
-        userInput = parseUserInput();
-
-        if(userInput == 'e') //if the user entered 'E' or 'e' then exit and return
+        userInput = parseUserInputInteger();
+        if(userInput == -1) //if the user entered 'E' or 'e' then exit and return
         {
             return -1;
         }
 
-        if(isdigit(userInput))
+        if(userInput > 0 && userInput < 6)
         {
             return userInput;
         }
@@ -107,6 +113,15 @@ Life pointConversion(Life player,int caseOfConversion)
                 cout << "how many strength points do you want to convert" << endl;
                 cout << "\nEnter Valid Option or enter 'e' to exit: " << endl;
                 numberOfPoints = parseUserInputInteger();
+                if(numberOfPoints == -1)
+                {
+                    numberOfPoints = 0;
+                }
+            }
+            if(numberOfPoints == 0)
+            {
+                cout << "No points Converted" << endl;
+                break;
             }
             numberOfPoints = player.getStrength() - numberOfPoints;
             if(numberOfPoints < 100)
@@ -129,6 +144,15 @@ Life pointConversion(Life player,int caseOfConversion)
                 cout << "how many stamina points do you want to convert" << endl;
                 cout << "\nEnter Valid Option or enter 'e' to exit: " << endl;
                 numberOfPoints = parseUserInputInteger();
+                if(numberOfPoints == -1)
+                {
+                    numberOfPoints = 0;
+                }
+            }
+            if(numberOfPoints == 0)
+            {
+                cout << "No points Converted" << endl;
+                break;
             }
             numberOfPoints = player.getStamina() - numberOfPoints;
 
@@ -151,7 +175,15 @@ Life pointConversion(Life player,int caseOfConversion)
             {
                 cout << "how many wisdom points do you want to convert" << endl;
                 cout << "\nEnter Valid Option or enter 'e' to exit: " << endl;
-                numberOfPoints = parseUserInputInteger();
+                if(numberOfPoints == -1)
+                {
+                    numberOfPoints = 0;
+                }
+            }
+            if(numberOfPoints == 0)
+            {
+                cout << "No points Converted" << endl;
+                break;
             }
             numberOfPoints = player.getWisdom() - numberOfPoints;
             if(numberOfPoints < 100)
@@ -200,10 +232,13 @@ Life menuDecision(int decision, Life player, const Board playingBoard, const int
                     {
                         case '1':
                             player = pointConversion(player,1);
+                            break;
                         case '2':
                              player = pointConversion(player,2);
+                             break;
                         case '3':
                             player = pointConversion(player,3);
+                            break;
                         default:
                             cout << "Unsucessful termination in Menu Decision" << endl;
                     }
@@ -215,16 +250,18 @@ Life menuDecision(int decision, Life player, const Board playingBoard, const int
                     cout << "Unsucessful termination in Menu Decision" << endl;
 
             }
-        break;
+            break;
 
         case 2:
             player.printStats();
             break;
         case 3:
             cout << "You are " << 51-playingBoard.getPlayerPosition(playerIndex) << " tile/s from the pride lands" << endl;
+            break;
         case 4:
             cout << "Here is your advisor:" << endl;
-            player.getAdvisor();
+            cout << player.getAdvisor() << endl;
+            break;
         case 5:
             break;
         default:
@@ -308,7 +345,6 @@ bool Game::play()
         }
 
     }
-
     int decidingFirstPlayer = playingBoard.spin()%4;
     int playerTurn = 0;
         //using random numbers to see what player will start the game

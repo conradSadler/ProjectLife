@@ -225,12 +225,6 @@ void Life:: toPrideLands()
 }
 
 /**
-|Option|Advisors| Description                                                                    |
-|   1  |Rafiki  | Invisibility (the ability to become un-seen)                                   |
-|   2  |Nala    | Night Vision (the ability to see clearly in darkness)                          |
-|   3  |Sarabi  | Energy Manipulation (the ability to shape and control the properties of energy)|
-|   4  |Zazu    | Weather Control (the ability to influence and manipulate weather patterns)     |
-|   5  |Sarafina| Super Speed (the ability to run 4x faster than the maximum speed of lions)     |
  * Description: This function prints the contents of advisors.txt and lets the user decide what advisor they want to have
  */
 void Life::setAdvisor()
@@ -243,12 +237,11 @@ void Life::setAdvisor()
     }
     else
     {
-        while(getline(cin,fileInput))  //outputing the contents of advisors.txt
+        while(getline(inputFile,fileInput))  //outputing the contents of advisors.txt
         {
             cout << fileInput << endl;
         }
         inputFile.close();
-
         bool validInput = false;
         string userInput;
         while(!validInput)  //while the user has not entered valid input, continue assking for input
@@ -291,5 +284,52 @@ void Life::setAdvisor()
             }
         }
     }
+}
+
+bool Life:: setCharacter(string name)
+{
+    fstream inputFile("characters.txt");
+    if(inputFile.fail())
+    {
+        cout << "File Failed To Open" << endl;
+        return false;
+    }
+    else
+    {
+        string hold;
+        string characterChoiceName;
+        string attributes[5];
+        const int attributesSize = 5;
+        int EndOfNameIndex;
+        bool characterMade = false;
+        getline(inputFile, hold);
+        while(getline(inputFile, hold) && !characterMade)
+        {
+
+            EndOfNameIndex = hold.find('|');
+            characterChoiceName = hold.substr(0,EndOfNameIndex);
+            characterChoiceName.erase(remove_if(characterChoiceName.begin(), characterChoiceName.end(), ::isspace),characterChoiceName.end());
+            
+            if(characterChoiceName == name)
+            {
+                pName = name;
+                split(hold.substr(EndOfNameIndex),'|',attributes,attributesSize);
+                pAge = stoi(attributes[0]);
+                pStrength = stoi(attributes[1]);
+                pStamina = stoi(attributes[2]);
+                pWisdom = stoi(attributes[3]);
+                pPridePoints = stoi(attributes[4]);
+                characterMade = true;
+            }
+
+        }
+        if(characterMade == false)
+        {
+            cout << "Character was not made becasue user entered invalid input" << endl;
+            return false;
+        }
+    }
+    inputFile.close();
+    return true;
 }
 // end of setters

@@ -436,48 +436,10 @@ void Board::setTrack(int track, int player_index)
 {
     if(track == 0 || track == 1)
     {
-        cout << "track: " << track << endl;
         player_position[player_index][0] = track;  //sets the track to the player in player_position where the players track and position on track are recorded
     }
     else
     {
         printf("Invalid path.\n");
-    }
-}
-/**
- * Description: This function displays the user menu and gets the users input, which is between 1 and 5.
- * @return the integer that the user entered, unless the user entered 'E' or 'e' which will return -1(unsuccessful)
- */
-int playerMenu()
-{
-    bool validInput = false;
-    string userInput;
-    while(!validInput)
-    {
-        system("clear");
-        cout << "  --- Player Menu ---  |Options|" << endl;
-        cout << "Check Player Progress: |   1   |" << endl;
-        cout << "Review Character:      |   2   |" << endl;
-        cout << "Check Position:        |   3   |" << endl;
-        cout << "Review your Advisor:   |   4   |" << endl;
-        cout << "Move Forward:          |   5   |" << endl;
-        cout << "\nEnter Valid Option: ";
-        
-        getline(cin,userInput); //getting input from the user
-        if(tolower(userInput[0]) == 'e') //if the user entered 'E' or 'e' then exit and return
-        {
-            return -1;
-        }
-        userInput.erase(remove_if(userInput.begin(),userInput.end(),::isspace),userInput.end());  //erasing all ' ','\f','\n','\r','\t','\v' from input
-        if(isdigit(userInput[0]))
-        {
-            return userInput[0];
-        }
-        else
-        {
-            cout << "Invalid user input. Please try again. Press 'E' to exit game" << endl;
-
-            __libcpp_thread_sleep_for(chrono::seconds(2));  //pausing thread for 2 seconds before giving the user another opertunity to enter a choice
-        }
     }
 }
