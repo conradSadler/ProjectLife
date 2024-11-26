@@ -17,8 +17,9 @@ class Life
     private:
         string pName;
         string advisor;
-        int pStrength,pStamina,pWisdom,pPridePoints,pAge;
+        int pStrength,pStamina,pWisdom,pPridePoints,pAge,advisorNumber;
         int split(string original, char delimiter, string splitParts[], const int splitPartsSize);
+        void setAdvisorNumber();
 
     public:
         Life();
@@ -30,6 +31,7 @@ class Life
         int getWisdom();
         int getPridePoints();
         int getAge();
+        int getAdvisorNumber();
         void setName(string name); 
         void setStrength(int strength);
         void setStamina(int stamina);
