@@ -365,6 +365,9 @@ bool Game::play()
      
     int playerDesicion = 0;
         //game playing loop
+    playingBoard.displayBoard();
+    __libcpp_thread_sleep_for(chrono::seconds(2)); //This pauses the current thread for 2 seconds
+
     while(playingBoard.getPlayerPosition(0) != 51 || playingBoard.getPlayerPosition(0) != 51)
     {
         if(playingBoard.getPlayerPosition(0) == 51)  // if player one has reached the "finish line", then only let player two move
@@ -386,7 +389,6 @@ bool Game::play()
             }
             playingBoard.movePlayer(playerTurn);
             playerTurn = 1;
-            playingBoard.displayBoard();
         }
         else if(playingBoard.getPlayerPosition(1) == 51)  // if player two has reached the "finish line", then only let player one move
         {
@@ -407,7 +409,6 @@ bool Game::play()
             }
             playingBoard.movePlayer(playerTurn);
             playerTurn = 0;
-            playingBoard.displayBoard();
         }
         else //if both players have not reached the finish line, then alternate turns
         {
@@ -426,10 +427,11 @@ bool Game::play()
                 }
                 //create menu function to handle menu (1->4)
             }
-            playingBoard.movePlayer(playerTurn);
-            playerTurn = ((playerTurn +1) % 2);
-            playingBoard.displayBoard();
+            if(playingBoard.movePlayer(playerTurn) != 1)
+            {
+                playerTurn = ((playerTurn +1) % 2);
+            }
         }
     }
-    return true;  
+    return true;
 }

@@ -26,16 +26,18 @@ private:
 public:
     Board();
     Board(int player_count);
+    //dont need to call copy contructor for setPlayer
     void setPlayer(Life player, int playerIndex);
     void setTrack(int track, int player_index);
     void displayTrack(int player_index);
     void initializeBoard();
     void displayBoard();
+    bool checkForImpact(int player_index);
     bool isBothPlayersOnTile(int track, int pos, int player_index);
-    bool movePlayer(int player_index);
     bool adventure(int player_index);
     bool chooseCharacter();
     int getPlayerPosition(int player_index) const;
+    int movePlayer(int player_index);
     int spin();
     Life getPlayer(int);
 };

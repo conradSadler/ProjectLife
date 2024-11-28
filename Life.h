@@ -1,6 +1,7 @@
 #include <string>
 #include <fstream>
 #include <iostream>
+#include "PlayerMetaData.h"
 using namespace std;
 
 #ifndef LIFE_H
@@ -12,7 +13,7 @@ using namespace std;
  * Date: 11/22/2024
  */
 
-class Life
+class Life:public PlayerMetaData
 {
     private:
         string pName;
@@ -32,6 +33,7 @@ class Life
         int getPridePoints();
         int getAge();
         int getAdvisorNumber();
+        void tileImpact(string);
         void setName(string name); 
         void setStrength(int strength);
         void setStamina(int stamina);

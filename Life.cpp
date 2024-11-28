@@ -332,4 +332,94 @@ bool Life:: setCharacter(string name)
     inputFile.close();
     return true;
 }
+
+void Life::tileImpact(string tileImp)
+{
+    // 1 = stamina ; 2 = strength ; 3 = wisdom
+    if(tileImp == "riddle")
+    {
+        ifstream inputFile("riddles.txt");
+        if(inputFile.fail())
+        {
+            cout << "Could not open riddles.txt" << endl;
+            return;
+        }
+        else
+        {
+            srand(time(NULL));
+            int riddleLine = (rand() % 28) -1;
+            string fileLine;
+            getline(inputFile,fileLine);
+            for(int i = 0; i < riddleLine; i++)
+            {
+                getline(inputFile,fileLine);
+            }
+            getline(inputFile,fileLine);
+            cout << "Here is the riddle:" << endl;
+            int indexOfSplit = fileLine.find('|');
+            cout << fileLine.substr(0,indexOfSplit) << endl;
+            string answer = fileLine.substr(indexOfSplit+1);
+            answer.erase(remove_if(answer.begin(),answer.end(),::isspace),answer.end());  //removing all white space from the string
+            cout << "Please enter an answer below:" << endl;
+            cin >> fileLine;
+            if(fileLine == answer)
+            {
+                cout << "Congratulations You Answered The Question Correctly" << endl;
+                pWisdom+=500;
+            }
+            else
+            {
+                cout << "Incorrect Answer!\n" << endl;
+            }
+            
+        }
+    }
+    else if(tileImp != "")
+    {
+        int indexOf = tileImp.find('|');
+        string parts = tileImp.substr(0,indexOf);
+        tileImp = tileImp.substr(indexOf+1);
+        for(int i = 0; i < parts.length();i++)
+        {
+            switch(parts[i])
+            {
+                case '1':
+                    i++;
+                    if(parts[i] == '+')
+                    {
+                        pStamina+=stoi(tileImp);
+                    }
+                    else
+                    {
+                        pStamina-=stoi(tileImp);
+                    }
+                    break;
+                case '2':
+                    i++;
+                    if(parts[i] == '+')
+                    {
+                        pStrength+=stoi(tileImp);
+                    }
+                    else
+                    {
+                        pStrength-=stoi(tileImp);
+                    }
+                    break;
+                case '3':
+                    i++;
+                    if(parts[i] == '+')
+                    {
+                        pWisdom+=stoi(tileImp);
+                    }
+                    else
+                    {
+                        pWisdom-=stoi(tileImp);
+                    }
+                    break;
+                default:
+                    cout << "Invalid tile impact" << endl;
+            }
+        }
+    }
+}
 // end of setters

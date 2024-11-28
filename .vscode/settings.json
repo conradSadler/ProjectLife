@@ -3,6 +3,11 @@
         "istream": "cpp",
         "iosfwd": "cpp",
         "iostream": "cpp",
-        "ostream": "cpp"
+        "ostream": "cpp",
+        "string": "cpp",
+        "ios": "cpp",
+        "__threading_support": "cpp",
+        "vector": "cpp",
+        "iterator": "cpp"
     }
 }

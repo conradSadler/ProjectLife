@@ -52,44 +52,63 @@ void Board::initializeTiles(int track)
     // Keep track of green tile positions to ensure we place exactly 30 greens
     for (int i = 0; i < total_tiles; i++)
     {
-        if (i == total_tiles - 1) {
+        if (i == total_tiles - 1) 
+        {
             // Set the last tile as Orange for "Pride Rock"
             temp.color = 'O';
         } 
-        else if (i == 0) {
+        else if (i == 0) 
+        {
             // Set the last tile as Orange for "Pride Rock"
             temp.color = 'Y';
         } 
-        else if (green_count < 30 && (rand() % (total_tiles - i) < 30 - green_count)) {
+        else if (green_count < 30 && (rand() % (total_tiles - i) < 30 - green_count)) 
+        {
             temp.color = 'G';
+            temp.type = "Roaming the Grasslands...";
+            temp.impact = "";
             green_count++;
         }
         else
         {
             // Randomly assign one of the other colors: Blue, Pink, Brown, Red, Purple
             int color_choice = rand() % 5;
+            // 1 = stamina ; 2 = strength ; 3 = wisdom
             switch (color_choice)
             {
                 case 0:
                     temp.color = 'B'; // Blue
+                    temp.type = "You’ve found a peaceful oasis!";
+                    temp.impact = "1+2+3+|200";
+                    temp.turn = 1;
                     break;
                 case 1:
                     temp.color = 'P'; // Pink
+                    temp.type = "Welcome to the land of enrichment!";
+                    temp.impact = "1+2+3+|300";
+                    //NEED to call setAdvisor
                     break;
                 case 2:
                     temp.color = 'N'; // Brown
+                    temp.type = "The Hyenas are on the prowl!";
+                    //NEED to return player to their previous position
+                    temp.impact = "1-|300";
                     break;
                 case 3:
                     temp.color = 'R'; // Red
+                    temp.type = "Uh-oh, you’ve stumbled into the Graveyard!";
+                    //NEED to move back 10 tiles
+                    temp.impact = "1-2-3-|100";
                     break;
                 case 4:
                     temp.color = 'U'; // Purple
+                    temp.type = "Time for a test of wits!";
+                    temp.impact = "riddle";
                     break;
             }
         }
 
         // Assign the tile to the board for the specified lane
-        temp.type = "placeholder information for tile " + to_string(i);
         _tiles[track][i] = temp;
     }
 }
@@ -237,7 +256,6 @@ void Board::displayTile(int track, int pos)
  */
 void Board::displayTrack(int track)
 {
-    int tileNumber = -1;
     int player_index = -1;
     for (int i = 0; i < _BOARD_SIZE; i++)
     {
@@ -250,14 +268,6 @@ void Board::displayTrack(int track)
             player_index = 1;
         }
         displayTile(track, i);
-        if(isPlayerOnTile(track, i, player_index))
-        {
-            tileNumber = i;
-        }
-    }
-    if(tileNumber != -1)
-    {
-        cout << "\n"<<_tiles[track][tileNumber].type;
     }
     cout << endl;
 }
@@ -285,26 +295,29 @@ int Board::spin()
 /**
  * Description: This function will move a player between 1 index to 6 indexes on the path based off of a random "digital spin"
  * @param player_index the player identifyer( 0 for player one and 1 for player 2 )
- * @return if the player reached the end of the path then the function returns true. Otherwise false
+ * @return if the player reached the end of the path then the function returns 100. If player landed on oasis return 1 for 1 extra turn. Otherwise 0
  */
-bool Board::movePlayer(int player_index)
+int Board::movePlayer(int player_index)
 {
      // Increment player position
      int rolledNum = spin();
-     cout << "Spinning ";
+     cout << "Spinning ..." << endl;
      __libcpp_thread_sleep_for(chrono::seconds(2)); //This pauses the current thread for 2 seconds
-     cout << ". ";
-     cout << ". ";
-     cout << ". ";
-     __libcpp_thread_sleep_for(chrono::seconds(2)); //This pauses the current thread for 2 seconds
-     cout << "You rolled a " << rolledNum << endl;
+     cout << "You rolled a " << rolledNum << " !"<< endl;
+
+     players[player_index].push(player_position[player_index][1]);
+
      player_position[player_index][1]+= rolledNum;  //incrementing player index by the number rolled
+
      if (player_position[player_index][1] == _BOARD_SIZE - 1)
      {
-         // Player reached last tile
-        return true;
+        return 100;
      }
-     return false;
+     if(checkForImpact(player_index))
+     {
+        return 1;
+     }
+     return 0;
  }
 /**
  * Description: This function gets the players index
@@ -442,4 +455,58 @@ void Board::setTrack(int track, int player_index)
     {
         printf("Invalid path.\n");
     }
+}
+bool Board::checkForImpact(int player_index)
+{
+    int path = player_position[player_index][0];
+    int position = player_position[player_index][1];
+    int lastPosition = -1;
+    bool display = false;
+
+    if(_tiles[path][position].color == 'B')
+    {
+        displayBoard();
+        cout << endl;
+        cout << _tiles[path][lastPosition].type << endl;
+        __libcpp_thread_sleep_for(chrono::seconds(2)); //This pauses the current thread for 2 seconds
+        return true;
+    }
+    while(lastPosition != player_position[player_index][1])
+    {
+        display = false;
+        lastPosition = player_position[player_index][1];
+            //if not an ordinary tile
+        displayBoard();
+        cout << endl;
+        cout << _tiles[path][lastPosition].type << endl;
+        __libcpp_thread_sleep_for(chrono::seconds(2)); //This pauses the current thread for 2 seconds
+        if(_tiles[path][lastPosition].impact != "")
+        {
+            players[player_index].tileImpact(_tiles[path][lastPosition].impact); //call tileimpact(string) to see if tile impacts player
+
+            if(_tiles[path][lastPosition].color == 'R')
+            {
+                if(player_position[player_index][1] < 10)
+                {
+                    player_position[player_index][1] = 0;
+                }
+                else
+                {
+                    player_position[player_index][1]-=10;
+                }
+                display = true;
+            }
+            else if(_tiles[path][lastPosition].color == 'P')
+            {
+                players[player_index].setAdvisor();
+            }
+            else if(_tiles[path][lastPosition].color == 'N')
+            {
+                        //getting the last recorded position of player
+                player_position[player_index][1] = players[player_index].pop();
+                display = true;
+            }
+        }
+    }
+    return false;
 }
