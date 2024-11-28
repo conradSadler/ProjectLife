@@ -15,6 +15,16 @@ class Tile
     public:
         string type;
         char color;
+        string impact;
+        int turn;
+        Tile()
+        {
+            string type = "";
+            char color;
+            string impact = "";
+            int turn = 0;
+        }
+
 };
 
 #endif
