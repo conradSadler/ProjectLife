@@ -2,6 +2,7 @@
 #include <fstream>
 #include <iostream>
 #include "PlayerMetaData.h"
+#include "RandomNum.h"
 using namespace std;
 
 #ifndef LIFE_H
@@ -11,16 +12,23 @@ using namespace std;
  * Name: ConRad Sadler
  * Project: Project Life Computer Science 1300
  * Date: 11/22/2024
+ * 
+ * This class focuses on storing all attributes relevent to a player in the game
  */
 
-class Life:public PlayerMetaData
+class Life:public PlayerMetaData //is-implemented-in-terms-of relationship
 {
     private:
         string pName;
         string advisor;
-        int pStrength,pStamina,pWisdom,pPridePoints,pAge,advisorNumber;
+        string attributes[5];
+        const static int attributesSize = 5;
+        double pPridePoints;
+        int pStrength,pStamina,pWisdom,pAge,advisorNumber;
         int split(string original, char delimiter, string splitParts[], const int splitPartsSize);
-        void setAdvisorNumber();
+        RandomNum randomNumObject;
+        void setAdvisorNumber();  //set to private becasue set Advisor number should not be changed outside of setAdvisor()
+        void tileImpactExtended(string tileImp);
 
     public:
         Life();
@@ -30,7 +38,7 @@ class Life:public PlayerMetaData
         int getStrength();
         int getStamina();
         int getWisdom();
-        int getPridePoints();
+        double getPridePoints();
         int getAge();
         int getAdvisorNumber();
         void tileImpact(string);
@@ -38,7 +46,7 @@ class Life:public PlayerMetaData
         void setStrength(int strength);
         void setStamina(int stamina);
         void setWisdom(int wisdom); 
-        void setPridePoints(int pride_points); 
+        void setPridePoints(double pride_points); 
         void setAge(int age);
         void setAdvisor();
         void trainCub(int strength,int stamina, int wisdom);

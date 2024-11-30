@@ -16,13 +16,11 @@ class Tile
         string type;
         char color;
         string impact;
-        int turn;
-        Tile()
+
+        inline Tile()
         {
             string type = "";
-            char color;
             string impact = "";
-            int turn = 0;
         }
 
 };

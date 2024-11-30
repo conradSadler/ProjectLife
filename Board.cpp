@@ -29,40 +29,36 @@
  */
 void Board::initializeBoard()
 {
-    // Seed random number generator in your main function once
     for (int i = 0; i < 2; i++)
     {
         initializeTiles(i);  // This ensures each lane has a unique tile distribution
     }
 }
 
-#include <cstdlib> // For rand() and srand()
-#include <ctime>   // For time()
 /**
- * Description - This function creates a tile object and initializes it with a color and tile *type(information)*(WORK IN PROGRESS)*
+ * Description - This function creates a tile object and initializes it with a color and tile type
  * @param track is the index of of the 2D array that stores all the created tiles for the two paths
  */
 void Board::initializeTiles(int track)
 {
-    srand(time(NULL));
     Tile temp;
     int green_count = 0;
     int total_tiles = _BOARD_SIZE;
 
-    // Keep track of green tile positions to ensure we place exactly 30 greens
+        // Keep track of green tile positions to ensure we place exactly 30 greens
     for (int i = 0; i < total_tiles; i++)
     {
         if (i == total_tiles - 1) 
         {
-            // Set the last tile as Orange for "Pride Rock"
+                // Set the last tile as Orange for "Pride Rock"
             temp.color = 'O';
         } 
         else if (i == 0) 
         {
-            // Set the last tile as Orange for "Pride Rock"
+                // Set the last tile as Orange for "Pride Rock"
             temp.color = 'Y';
         } 
-        else if (green_count < 30 && (rand() % (total_tiles - i) < 30 - green_count)) 
+        else if (green_count < 30 && (randomNumObject.getRandNum() % (total_tiles - i) < 30 - green_count)) 
         {
             temp.color = 'G';
             temp.type = "Roaming the Grasslands...";
@@ -71,37 +67,33 @@ void Board::initializeTiles(int track)
         }
         else
         {
-            // Randomly assign one of the other colors: Blue, Pink, Brown, Red, Purple
-            int color_choice = rand() % 5;
-            // 1 = stamina ; 2 = strength ; 3 = wisdom
+                // Randomly assign one of the other colors: Blue, Pink, Brown, Red, Purple
+            int color_choice = randomNumObject.getRandNum() % 5;
+                // 1 = stamina ; 2 = strength ; 3 = wisdom
             switch (color_choice)
             {
                 case 0:
-                    temp.color = 'B'; // Blue
+                    temp.color = 'B';  // Blue
                     temp.type = "You’ve found a peaceful oasis!";
                     temp.impact = "1+2+3+|200";
-                    temp.turn = 1;
                     break;
                 case 1:
-                    temp.color = 'P'; // Pink
+                    temp.color = 'P';  // Pink
                     temp.type = "Welcome to the land of enrichment!";
                     temp.impact = "1+2+3+|300";
-                    //NEED to call setAdvisor
                     break;
                 case 2:
-                    temp.color = 'N'; // Brown
+                    temp.color = 'N';  // Brown
                     temp.type = "The Hyenas are on the prowl!";
-                    //NEED to return player to their previous position
                     temp.impact = "1-|300";
                     break;
                 case 3:
-                    temp.color = 'R'; // Red
+                    temp.color = 'R';  // Red
                     temp.type = "Uh-oh, you’ve stumbled into the Graveyard!";
-                    //NEED to move back 10 tiles
                     temp.impact = "1-2-3-|100";
                     break;
                 case 4:
-                    temp.color = 'U'; // Purple
+                    temp.color = 'U';  // Purple
                     temp.type = "Time for a test of wits!";
                     temp.impact = "riddle";
                     break;
@@ -120,16 +112,17 @@ void Board::initializeTiles(int track)
  */
 Board::Board()
 {
+        //INITIALIZE ALL OBJECTS 
+     initializeBoard();
      _player_count = 0;
 
-     // Initialize player position
+        // Initialize player position
      player_position[0][0] = -1;
-     player_position[0][1] = -1;
+     player_position[0][1] = 51;  //default to the end of the board
      player_position[1][0] = -1;
-     player_position[1][1] = -1;
+     player_position[1][1] = 51;  //default to the end of the board
 
-     // Initialize tiles
-     initializeBoard();
+        // Initialize tiles
 }
 /**
  * This overloaded constructor initializes up to two players at the start of the cub training path 
@@ -139,6 +132,7 @@ Board::Board()
  */
 Board::Board(int player_count)
 {
+        //INITIALIZE ALL OBJECTS
     if (player_count > _MAX_PLAYERS)
     {
         _player_count = _MAX_PLAYERS;
@@ -149,9 +143,9 @@ Board::Board(int player_count)
     }
         //default setting
     player_position[0][0] = -1;
-    player_position[0][1] = -1;
+    player_position[0][1] = 51;  //default to the end of the board
     player_position[1][0] = -1;
-    player_position[1][1] = -1;
+    player_position[1][1] = 51;  //default to the end of the board
         // Initialize player position
     for (int i = 0; i < _player_count; i++)
     {
@@ -290,7 +284,42 @@ void Board::displayBoard()
  */
 int Board::spin()
 {
-    return (rand() % 6) +1;
+    return (randomNumObject.getRandNum() % 6) +1;  // 1 though 6 number
+}
+void Board::calculateWinner()
+{
+    double mostPridePoints = INT_MIN;
+    bool start = true;
+    int pridePointholder = 0;
+    string winner;
+    for(int i = 0; i < 2; i++)
+    {
+        pridePointholder = 0;
+
+        if(!(players[i].getName() == ""))
+        {
+            pridePointholder += (players[i].getWisdom() * 1000);
+            pridePointholder += (players[i].getStamina() * 1000);
+            pridePointholder += (players[i].getStrength() * 1000);
+            pridePointholder += players[i].getPridePoints();
+
+            if(pridePointholder > mostPridePoints)
+            {
+                mostPridePoints = pridePointholder;
+                winner = "--- Player " + to_string(i+1);
+                winner+= " (" + players[i].getName() + ") has Won the game with an outstanding ";
+                start = false;
+            }
+            else if( (pridePointholder == mostPridePoints) && start == false)
+            {
+               cout << "--- Tie between Player 1 ("+players[0].getName() + ") and Player 2 ("+players[1].getName() + ") who both had "<< mostPridePoints <<" pride points! ---" << endl;
+               return;
+            }
+        }
+    }
+
+    printf("%s%f pride points! ---\n", winner.c_str(),mostPridePoints);
+    displayBoard();
 }
 /**
  * Description: This function will move a player between 1 index to 6 indexes on the path based off of a random "digital spin"
@@ -305,14 +334,18 @@ int Board::movePlayer(int player_index)
      __libcpp_thread_sleep_for(chrono::seconds(2)); //This pauses the current thread for 2 seconds
      cout << "You rolled a " << rolledNum << " !"<< endl;
 
-     players[player_index].push(player_position[player_index][1]);
+     players[player_index].push(player_position[player_index][1]);  //adding past position to set before calculating new position
 
-     player_position[player_index][1]+= rolledNum;  //incrementing player index by the number rolled
-
-     if (player_position[player_index][1] == _BOARD_SIZE - 1)
+     if( (player_position[player_index][1]+ rolledNum) >= (_BOARD_SIZE - 1))  //if player is at the pride lands (last tile)
      {
+        player_position[player_index][1] = 51;
         return 100;
      }
+     else
+     {
+        player_position[player_index][1]+= rolledNum;  //incrementing player index by the number rolled
+     }
+
      if(checkForImpact(player_index))
      {
         return 1;
@@ -326,8 +359,8 @@ int Board::movePlayer(int player_index)
  */
 int Board::getPlayerPosition(int player_index) const
 {
-     if (player_index >= 0 && player_index <= _player_count)  //checking if valid player
-     {
+    if (player_index >= 0 && player_index <= _player_count)  //checking if valid player
+    {
         return player_position[player_index][1];
     }
     return -1;
@@ -456,6 +489,12 @@ void Board::setTrack(int track, int player_index)
         printf("Invalid path.\n");
     }
 }
+/**
+ * This function helps implement special tiles effects on players. More specifically this function will move the player's 
+ * position of the game board for certain tiles like the Hyena tile. It will also call setAdvisor if the player lands on a pink game tile.
+ * @param player_index the players index(either 0 or 1)
+ * @return returns true if player is on oasis tyle. False otherwise.
+ */
 bool Board::checkForImpact(int player_index)
 {
     int path = player_position[player_index][0];
@@ -467,7 +506,7 @@ bool Board::checkForImpact(int player_index)
     {
         displayBoard();
         cout << endl;
-        cout << _tiles[path][lastPosition].type << endl;
+        cout << _tiles[path][position].type << endl;
         __libcpp_thread_sleep_for(chrono::seconds(2)); //This pauses the current thread for 2 seconds
         return true;
     }
@@ -507,6 +546,89 @@ bool Board::checkForImpact(int player_index)
                 display = true;
             }
         }
+        else
+        {
+            if(lastPosition != 0 && lastPosition != 51)  //can't have random events happen on starting tile or ending tile
+            {
+                checkForRandomEvent(player_index);
+            }
+        }
     }
     return false;
+}
+/**
+ * this is a testing function
+ */
+void Board::testForRandomEvent(int dec)
+{
+    randomEventsObject.printLists(dec);
+}
+/**
+ * This function assigns a random event 50% of the time to non-special tiles (i.e. grass tiles).
+ * To do this the function uses the RandomEvents class which organizes the random events from random_events.txt
+ * @param player_index the player's index(either 0 or 1)
+ */
+void Board::checkForRandomEvent(int player_index)
+{
+    if(randomNumObject.getRandNum()%2 == 0)
+    {
+        if(randomNumObject.getRandNum()%2 == 0) //positive outcome
+        {
+
+           if(player_position[player_index][0] == 0) //event for the cub training path (path '0')
+           {
+                cout << "*** Random Event Happened ***" << endl;
+                cout << randomEventsObject.getPositiveEvent(randomNumObject.getRandNum()%30,"0").eventName << endl;  //outputing the random event that happened
+                players[player_index].setPridePoints(stoi(randomEventsObject.getPositiveEvent(randomNumObject.getRandNum()%30,"0").pridePoints) + players[player_index].getPridePoints());
+           }
+           else //event for the pride lands path (path '1')
+           {
+                cout << "*** Random Event Happened ***" << endl;
+                cout << randomEventsObject.getPositiveEvent(randomNumObject.getRandNum()%30,"1").eventName << endl;
+                players[player_index].setPridePoints(stoi(randomEventsObject.getPositiveEvent(randomNumObject.getRandNum()%30,"1").pridePoints) + players[player_index].getPridePoints());
+           }
+
+        }
+        else //negative outcome
+        {
+           if(player_position[player_index][0] == 0)  //event for the cub training path (path '0')
+           {
+                cout << "*** Random Event Happened ***" << endl;
+                cout << randomEventsObject.getNegativeEvent(randomNumObject.getRandNum()%20,"0").eventName << endl;  //outputing the random event that happened
+                
+                if(players[player_index].getAdvisorNumber() == stoi(randomEventsObject.getNegativeEvent(randomNumObject.getRandNum()%20,"0").advisor))  //determining if your advisor will protect you
+                {
+                    cout << "\nYour Advisor protected you!\n" << endl;
+                }
+                else  //advisor did not protect you becasue you had the wrong or no advisor
+                {
+                    int pridepoints = players[player_index].getPridePoints();
+                        //formula below: player's current pride points + negative number
+                    players[player_index].setPridePoints(pridepoints + stoi(randomEventsObject.getNegativeEvent(randomNumObject.getRandNum()%20,"0").pridePoints));
+
+                    cout << "\nYou lost " << pridepoints - players[player_index].getPridePoints() << " Pride Points! \n" << endl;
+
+                }
+
+           }
+           else  //event for the pride lands path (path '1')
+           {
+                cout << "*** Random Event Happened ***" << endl;
+                cout << randomEventsObject.getNegativeEvent(randomNumObject.getRandNum()%20,"1").eventName << endl;   //outputing the random event that happened
+                
+                if(players[player_index].getAdvisorNumber() == stoi(randomEventsObject.getNegativeEvent(randomNumObject.getRandNum()%20,"1").advisor))  //determining if your advisor will protect you
+                {
+                    cout << "\nYour Advisor protected you!\n" << endl;
+                }
+                else  //advisor did not protect you becasue you had the wrong or no advisor
+                {
+                    int pridepoints = players[player_index].getPridePoints();
+                    players[player_index].setPridePoints(pridepoints + stoi(randomEventsObject.getNegativeEvent(randomNumObject.getRandNum()%20,"1").pridePoints));
+
+                    cout << "\nYou lost " << pridepoints - players[player_index].getPridePoints() << " Pride Points! \n" << endl;
+
+                }
+           }
+        }
+    }
 }

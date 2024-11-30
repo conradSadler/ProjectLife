@@ -50,6 +50,65 @@ int Life:: split(string original, char delimiter, string splitParts[], const int
     return 1;
 
 }
+/**
+ * This function extends tileImpact and is only used by tileImpact to deal with player 
+ * attribute deductions and additions becasue of tiles like oasis, Graveyard, Hyenas, and challenge Tiles.
+ * @param tileImp is a tile object attribute that describes how the tile the player is on will impact the player
+ */
+void Life::tileImpactExtended(string tileImp)
+{
+    int indexOf = tileImp.find('|');
+        /**
+         * this substring 'parts' contains information about what attributes are supposed
+         * to be added to and what attributes are suposed to be deducted from
+         */
+    string parts = tileImp.substr(0,indexOf);
+    tileImp = tileImp.substr(indexOf+1);
+        /**
+         * This substring 'tileImp' contains information about how many points should be deducted or added
+         */
+    for(int i = 0; i < parts.length();i++)
+    {
+        switch(parts[i])  //parsing through parts
+        {
+            case '1':
+                i++;
+                if(parts[i] == '+')
+                {
+                    setStamina(pStamina+=stoi(tileImp));
+                }
+                else
+                {
+                    setStamina(pStamina-=stoi(tileImp));
+                }
+                break;
+            case '2':
+                i++;
+                if(parts[i] == '+')
+                {
+                    setStrength(pStrength+=stoi(tileImp));
+                }
+                else
+                {
+                    setStrength(pStrength-=stoi(tileImp));
+                }
+                break;
+            case '3':
+                i++;
+                if(parts[i] == '+')
+                {
+                    setWisdom(pWisdom+=stoi(tileImp));
+                }
+                else
+                {
+                    setWisdom(pWisdom-=stoi(tileImp));
+                }
+                break;
+            default:
+                cout << "Invalid tile impact" << endl;
+        }
+    }
+}
 
 //end of private functions
 
@@ -57,6 +116,9 @@ int Life:: split(string original, char delimiter, string splitParts[], const int
 
 Life:: Life()
 {
+    advisor = "";
+    string attributes[5];
+    advisorNumber = -1;
     pName = "";
     pStrength = 100;
     pStamina = 100;
@@ -94,6 +156,9 @@ Life::Life(string newName,int newStrength,int newStamina,int newWisdom)
     }
     pPridePoints = 0;
     pAge = 1;
+    advisorNumber = -1;
+    advisor = "";
+    string attributes[5];
 }
 // end of constructors
 
@@ -102,33 +167,40 @@ string Life:: getName()
 {
     return pName;
 }
+
 int Life:: getStrength()
 {
     return pStrength;
 }
+
 int Life:: getStamina()
 {
     return pStamina;
 }
+
 int Life:: getWisdom()
 {
     return pWisdom;
 }
-int Life:: getPridePoints()
+
+double Life:: getPridePoints()
 {
     return pPridePoints;
 }
+
 int Life:: getAge()
 {
     return pAge;
 }
+
 /**
  * Description: This function prints out all of the players information
  */
 void Life:: printStats()
 {
-    printf("%s, age %d\nStrength: %d\nStamina: %d\nWisdom: %d\nPride Points: %d\n",pName.c_str(),pAge,pStrength,pStamina,pWisdom,pPridePoints);
+    printf("%s, age %d\nStrength: %d\nStamina: %d\nWisdom: %d\nPride Points: %f\n",pName.c_str(),pAge,pStrength,pStamina,pWisdom,pPridePoints);
 }
+
 /**
  * Description: This function reads characters.txt and prints it the the output stream for the user to see
  */
@@ -151,10 +223,12 @@ bool Life:: displayCharacters()
     inputFile.close();
     return true;
 }
+
 string Life::getAdvisor()
 {
     return advisor;
 }
+
 int Life::getAdvisorNumber()
 {
     return advisorNumber;
@@ -167,6 +241,7 @@ void Life:: setName(string name)
 {
     pName = name;
 }
+
 void Life:: setStrength(int strength)
 {
     if(strength < 100)
@@ -178,6 +253,7 @@ void Life:: setStrength(int strength)
         pStrength = strength;
     }
 }
+
 void Life:: setStamina(int stamina)
 {
     if(stamina <100)
@@ -189,6 +265,7 @@ void Life:: setStamina(int stamina)
         pStamina = stamina;
     }
 }
+
 void Life:: setWisdom(int wisdom)
 {
     if(wisdom < 100)
@@ -200,14 +277,19 @@ void Life:: setWisdom(int wisdom)
         pWisdom = wisdom;
     }
 }
-void Life:: setPridePoints(int pride_points)
+
+void Life:: setPridePoints(double pride_points)
 {
     pPridePoints = pride_points;
 }
+
 void Life:: setAge(int age)
 {
     pAge = age;
 }
+/**
+ * This function sets the player with the appropriate stats if the player chooses the go to cub training
+ */
 void Life:: trainCub(int strength,int stamina, int wisdom)
 {
     pStrength+=strength;
@@ -215,7 +297,9 @@ void Life:: trainCub(int strength,int stamina, int wisdom)
     pWisdom+=wisdom;
     pPridePoints-=5000;
 }
-
+/**
+ * This function sets the player with the appropriate stats if the player chooses the go to the pride lands
+ */
 void Life:: toPrideLands()
 {
     pStrength+=2000;
@@ -225,7 +309,7 @@ void Life:: toPrideLands()
 }
 
 /**
- * Description: This function prints the contents of advisors.txt and lets the user decide what advisor they want to have
+ * Description: This function prints the contents of advisors.txt and lets the user decide what advisor they want to have.
  */
 void Life::setAdvisor()
 {
@@ -249,38 +333,45 @@ void Life::setAdvisor()
             cout<< "Please enter an option from the list (1->5) or 0 to exit: ";
             getline(cin,userInput);
             userInput.erase(remove_if(userInput.begin(),userInput.end(),::isspace),userInput.end());  //removing all white space from the string
-            switch(userInput[0])
+            if(userInput.length() > 1)
             {
-                case '0':
-                    validInput = true;
-                    break;
-                case '1':
-                    advisor = "Rafiki | Invisibility (the ability to become un-seen)";
-                    advisorNumber = 1;
-                    validInput = true;
-                    break;
-                case '2':
-                    advisor = "Nala | Night Vision (the ability to see clearly in darkness)";
-                    advisorNumber = 2;
-                    validInput = true;
-                    break;
-                case '3':
-                    advisor = "Sarabi | Energy Manipulation (the ability to shape and control the properties of energy)";
-                    advisorNumber = 3;
-                    validInput = true;
-                    break;
-                case '4':
-                    advisor = "Zazu | Weather Control (the ability to influence and manipulate weather patterns)";
-                    advisorNumber = 4;
-                    validInput = true;
-                    break;
-                case '5':
-                    advisor = "Sarafina | Super Speed (the ability to run 4x faster than the maximum speed of lions)";
-                    advisorNumber = 5;
-                    validInput = true;
-                    break;
-                default:
-                    cout<< "Invalid user input please try again." << endl;
+                cout<< "Invalid user input please try again." << endl;
+            }
+            else
+            {
+                switch(userInput[0])
+                {
+                    case '0':
+                        validInput = true;
+                        break;
+                    case '1':
+                        advisor = "Rafiki | Invisibility (the ability to become un-seen)";
+                        advisorNumber = 1;
+                        validInput = true;
+                        break;
+                    case '2':
+                        advisor = "Nala | Night Vision (the ability to see clearly in darkness)";
+                        advisorNumber = 2;
+                        validInput = true;
+                        break;
+                    case '3':
+                        advisor = "Sarabi | Energy Manipulation (the ability to shape and control the properties of energy)";
+                        advisorNumber = 3;
+                        validInput = true;
+                        break;
+                    case '4':
+                        advisor = "Zazu | Weather Control (the ability to influence and manipulate weather patterns)";
+                        advisorNumber = 4;
+                        validInput = true;
+                        break;
+                    case '5':
+                        advisor = "Sarafina | Super Speed (the ability to run 4x faster than the maximum speed of lions)";
+                        advisorNumber = 5;
+                        validInput = true;
+                        break;
+                    default:
+                        cout<< "Invalid user input please try again." << endl;
+                }
             }
         }
     }
@@ -298,8 +389,6 @@ bool Life:: setCharacter(string name)
     {
         string hold;
         string characterChoiceName;
-        string attributes[5];
-        const int attributesSize = 5;
         int EndOfNameIndex;
         bool characterMade = false;
         getline(inputFile, hold);
@@ -313,12 +402,12 @@ bool Life:: setCharacter(string name)
             if(characterChoiceName == name)
             {
                 pName = name;
-                split(hold.substr(EndOfNameIndex),'|',attributes,attributesSize);
-                pAge = stoi(attributes[0]);
-                pStrength = stoi(attributes[1]);
-                pStamina = stoi(attributes[2]);
-                pWisdom = stoi(attributes[3]);
-                pPridePoints = stoi(attributes[4]);
+                split(hold.substr(EndOfNameIndex),'|',attributes,attributesSize); //splitting the part after the advisors name from the line read from advisors.txt 
+                pAge = stoi(attributes[0]); //converting string to int
+                pStrength = stoi(attributes[1]); //converting string to int
+                pStamina = stoi(attributes[2]); //converting string to int
+                pWisdom = stoi(attributes[3]); //converting string to int
+                pPridePoints = stoi(attributes[4]); //converting string to int
                 characterMade = true;
             }
 
@@ -332,7 +421,12 @@ bool Life:: setCharacter(string name)
     inputFile.close();
     return true;
 }
-
+/**
+ * This function handles all impacts to the player's data members from special tiles.
+ * if the player lands on a riddle tile, this function reads riddle from riddle.txt and gets user input to check if the user answered the riddle correctly
+ * This function also  handles point player attribute deductions and additions becasue of tiles like oasis, Graveyard,Hyenas, and challenge Tiles.
+ * @param tileImp is a tile object attribute that describes how the tile the player is on will impact the player
+ */
 void Life::tileImpact(string tileImp)
 {
     // 1 = stamina ; 2 = strength ; 3 = wisdom
@@ -346,8 +440,7 @@ void Life::tileImpact(string tileImp)
         }
         else
         {
-            srand(time(NULL));
-            int riddleLine = (rand() % 28) -1;
+            int riddleLine = (randomNumObject.getRandNum() % 28) -1;
             string fileLine;
             getline(inputFile,fileLine);
             for(int i = 0; i < riddleLine; i++)
@@ -373,53 +466,11 @@ void Life::tileImpact(string tileImp)
             }
             
         }
+        inputFile.close();
     }
-    else if(tileImp != "")
+    else if(tileImp != "")  //if it is not a grasslands tile
     {
-        int indexOf = tileImp.find('|');
-        string parts = tileImp.substr(0,indexOf);
-        tileImp = tileImp.substr(indexOf+1);
-        for(int i = 0; i < parts.length();i++)
-        {
-            switch(parts[i])
-            {
-                case '1':
-                    i++;
-                    if(parts[i] == '+')
-                    {
-                        pStamina+=stoi(tileImp);
-                    }
-                    else
-                    {
-                        pStamina-=stoi(tileImp);
-                    }
-                    break;
-                case '2':
-                    i++;
-                    if(parts[i] == '+')
-                    {
-                        pStrength+=stoi(tileImp);
-                    }
-                    else
-                    {
-                        pStrength-=stoi(tileImp);
-                    }
-                    break;
-                case '3':
-                    i++;
-                    if(parts[i] == '+')
-                    {
-                        pWisdom+=stoi(tileImp);
-                    }
-                    else
-                    {
-                        pWisdom-=stoi(tileImp);
-                    }
-                    break;
-                default:
-                    cout << "Invalid tile impact" << endl;
-            }
-        }
+        tileImpactExtended(tileImp);
     }
 }
 // end of setters

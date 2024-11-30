@@ -7,7 +7,8 @@
  * Name: ConRad Sadler
  * Project: Project Life Computer Science 1300
  * Date: 11/22/2024
- * //promises the strong guarentee
+ * 
+ * This class records the player's positions on the board.
  */
 
 class PlayerMetaData
