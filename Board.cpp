@@ -29,7 +29,6 @@
  */
 void Board::initializeBoard()
 {
-    // Seed random number generator in your main function once
     for (int i = 0; i < 2; i++)
     {
         initializeTiles(i);  // This ensures each lane has a unique tile distribution
@@ -44,7 +43,6 @@ void Board::initializeBoard()
  */
 void Board::initializeTiles(int track)
 {
-    srand(time(NULL));
     Tile temp;
     int green_count = 0;
     int total_tiles = _BOARD_SIZE;
@@ -62,7 +60,7 @@ void Board::initializeTiles(int track)
             // Set the last tile as Orange for "Pride Rock"
             temp.color = 'Y';
         } 
-        else if (green_count < 30 && (rand() % (total_tiles - i) < 30 - green_count)) 
+        else if (green_count < 30 && (randomNumObject.getRandNum() % (total_tiles - i) < 30 - green_count)) 
         {
             temp.color = 'G';
             temp.type = "Roaming the Grasslands...";
@@ -72,7 +70,7 @@ void Board::initializeTiles(int track)
         else
         {
             // Randomly assign one of the other colors: Blue, Pink, Brown, Red, Purple
-            int color_choice = rand() % 5;
+            int color_choice = randomNumObject.getRandNum() % 5;
             // 1 = stamina ; 2 = strength ; 3 = wisdom
             switch (color_choice)
             {
@@ -120,6 +118,8 @@ void Board::initializeTiles(int track)
  */
 Board::Board()
 {
+     //INITIALIZE ALL OBJECTS 
+     initializeBoard();
      _player_count = 0;
 
      // Initialize player position
@@ -129,7 +129,6 @@ Board::Board()
      player_position[1][1] = -1;
 
      // Initialize tiles
-     initializeBoard();
 }
 /**
  * This overloaded constructor initializes up to two players at the start of the cub training path 
@@ -139,6 +138,7 @@ Board::Board()
  */
 Board::Board(int player_count)
 {
+     //INITIALIZE ALL OBJECTS
     if (player_count > _MAX_PLAYERS)
     {
         _player_count = _MAX_PLAYERS;
@@ -290,7 +290,7 @@ void Board::displayBoard()
  */
 int Board::spin()
 {
-    return (rand() % 6) +1;
+    return (randomNumObject.getRandNum() % 6) +1;
 }
 /**
  * Description: This function will move a player between 1 index to 6 indexes on the path based off of a random "digital spin"
@@ -467,7 +467,7 @@ bool Board::checkForImpact(int player_index)
     {
         displayBoard();
         cout << endl;
-        cout << _tiles[path][lastPosition].type << endl;
+        cout << _tiles[path][position].type << endl;
         __libcpp_thread_sleep_for(chrono::seconds(2)); //This pauses the current thread for 2 seconds
         return true;
     }
@@ -506,6 +506,79 @@ bool Board::checkForImpact(int player_index)
                 player_position[player_index][1] = players[player_index].pop();
                 display = true;
             }
+        }
+        else
+        {
+            checkForRandomEvent(player_index);
+        }
+    }
+    return false;
+}
+void Board::testForRandomEvent(int dec)
+{
+    randomEventsObject.printLists(dec);
+}
+bool Board::checkForRandomEvent(int player_index)
+{
+
+    if(randomNumObject.getRandNum()%2 == 0)
+    {
+        if(randomNumObject.getRandNum()%2 == 0) //positive outcome
+        {
+
+           if(player_position[player_index][0] == 0)
+           {
+                cout << "*** Random Event Happened ***" << endl;
+                cout << randomEventsObject.getPositiveEvent(randomNumObject.getRandNum()%30,"0").eventName << endl;
+                players[player_index].setPridePoints(stoi(randomEventsObject.getPositiveEvent(randomNumObject.getRandNum()%30,"0").pridePoints) + players[player_index].getPridePoints());
+           }
+           else
+           {
+                cout << "*** Random Event Happened ***" << endl;
+                cout << randomEventsObject.getPositiveEvent(randomNumObject.getRandNum()%30,"1").eventName << endl;
+                players[player_index].setPridePoints(stoi(randomEventsObject.getPositiveEvent(randomNumObject.getRandNum()%30,"1").pridePoints) + players[player_index].getPridePoints());
+           }
+
+        }
+        else //negative outcome
+        {
+           if(player_position[player_index][0] == 0)
+           {
+                cout << "*** Random Event Happened ***" << endl;
+                cout << randomEventsObject.getNegativeEvent(randomNumObject.getRandNum()%20,"0").eventName << endl;
+                
+                if(players[player_index].getAdvisorNumber() == stoi(randomEventsObject.getNegativeEvent(randomNumObject.getRandNum()%20,"0").advisor))
+                {
+                    cout << "\nYour Advisor protected you!\n" << endl;
+                }
+                else
+                {
+                    int pridepoints = players[player_index].getPridePoints();
+                    players[player_index].setPridePoints(pridepoints + stoi(randomEventsObject.getNegativeEvent(randomNumObject.getRandNum()%20,"0").pridePoints));
+
+                    cout << "\nYou lost " << pridepoints - players[player_index].getPridePoints() << " Pride Points! \n" << endl;
+
+                }
+
+           }
+           else
+           {
+                cout << "*** Random Event Happened ***" << endl;
+                cout << randomEventsObject.getNegativeEvent(randomNumObject.getRandNum()%20,"1").eventName << endl;
+                
+                if(players[player_index].getAdvisorNumber() == stoi(randomEventsObject.getNegativeEvent(randomNumObject.getRandNum()%20,"1").advisor))
+                {
+                    cout << "\nYour Advisor protected you!\n" << endl;
+                }
+                else
+                {
+                    int pridepoints = players[player_index].getPridePoints();
+                    players[player_index].setPridePoints(pridepoints + stoi(randomEventsObject.getNegativeEvent(randomNumObject.getRandNum()%20,"1").pridePoints));
+
+                    cout << "\nYou lost " << pridepoints - players[player_index].getPridePoints() << " Pride Points! \n" << endl;
+
+                }
+           }
         }
     }
     return false;

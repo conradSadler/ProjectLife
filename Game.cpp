@@ -20,6 +20,11 @@ string Game::getWinner()
 {
     return winner;
 }
+void Game::outputRandomPositiveEvents()
+{
+    Board playingBoard = Board(2);
+    playingBoard.testForRandomEvent(0);
+}
 int parseUserInputInteger()
 {
     string userInput;

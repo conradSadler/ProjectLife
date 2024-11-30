@@ -57,6 +57,7 @@ int Life:: split(string original, char delimiter, string splitParts[], const int
 
 Life:: Life()
 {
+    advisorNumber = -1;
     pName = "";
     pStrength = 100;
     pStamina = 100;
@@ -94,6 +95,7 @@ Life::Life(string newName,int newStrength,int newStamina,int newWisdom)
     }
     pPridePoints = 0;
     pAge = 1;
+    advisorNumber = -1;
 }
 // end of constructors
 

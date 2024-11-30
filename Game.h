@@ -18,6 +18,8 @@ class Game
         bool play();
         void setWinner(string);
         string getWinner();
+        void outputRandomPositiveEvents();
+        
 
 };
 
