@@ -330,12 +330,20 @@ void Life::setAdvisor()
         string userInput;
         while(!validInput)  //while the user has not entered valid input, continue assking for input
         {
-            cout<< "Please enter an option from the list (1->5) or 0 to exit: ";
+            cout<< "Please enter an option from the list (1->5) or 0 to exit:" << endl;
+            if(advisor != "")
+            {
+                cout << "\n--- You can not enter " << advisorNumber << " becasue " << advisor.substr(0,advisor.find('|')) <<"is your current advisor ---" << endl;
+            }
             getline(cin,userInput);
             userInput.erase(remove_if(userInput.begin(),userInput.end(),::isspace),userInput.end());  //removing all white space from the string
             if(userInput.length() > 1)
             {
-                cout<< "Invalid user input please try again." << endl;
+                cout<< "Invalid user input please try again.\n" << endl;
+            }
+            else if(userInput[0] == to_string(advisorNumber)[0])  //comparing integer that is a character to integer that is a character
+            {
+                cout<< "Invalid user input please try again.\n" << endl;
             }
             else
             {
@@ -370,7 +378,7 @@ void Life::setAdvisor()
                         validInput = true;
                         break;
                     default:
-                        cout<< "Invalid user input please try again." << endl;
+                        cout<< "Invalid user input please try again.\n" << endl;
                 }
             }
         }
@@ -457,12 +465,12 @@ void Life::tileImpact(string tileImp)
             cin >> fileLine;
             if(fileLine == answer)
             {
-                cout << "Congratulations You Answered The Question Correctly" << endl;
+                cout << "\nCongratulations You Answered The Question Correctly\n" << endl;
                 pWisdom+=500;
             }
             else
             {
-                cout << "Incorrect Answer!\n" << endl;
+                cout << "\nIncorrect Answer!\n" << endl;
             }
             
         }
