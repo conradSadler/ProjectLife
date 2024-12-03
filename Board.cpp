@@ -580,13 +580,16 @@ void Board::checkForRandomEvent(int player_index)
                 RandomEvents::positiveEvent thePosEvent = randomEventsObject.getPositiveEvent(randomNumObject.getRandNum()%30,"0"); //stores returned struct from method
 
                 cout << thePosEvent.eventName << endl;  //outputing the random event that happened
+                cout << "\nYou gained " << thePosEvent.pridePoints << " Pride Points! \n" << endl;
                 players[player_index].setPridePoints(stoi(thePosEvent.pridePoints) + players[player_index].getPridePoints());
            }
            else //event for the pride lands path (path '1')
            {
                 cout << "\n*** Random Event Happened ***\n" << endl;
                 RandomEvents::positiveEvent thePosEvent = randomEventsObject.getPositiveEvent(randomNumObject.getRandNum()%30,"1");  //stores returned struct from method
+                
                 cout << thePosEvent.eventName << endl;
+                cout << "\nYou gained " << thePosEvent.pridePoints << " Pride Points! \n" << endl;
                 players[player_index].setPridePoints(stoi(thePosEvent.pridePoints) + players[player_index].getPridePoints());
            }
 
