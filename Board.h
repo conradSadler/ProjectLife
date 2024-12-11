@@ -14,16 +14,9 @@
  * This class pertains to using the game board
  */
 
-class Board
+class Board:private RandomEvents //is-implemented-in-terms-of relationship
 {
 private:
-    struct r
-    {
-        string eventName;
-        string path;
-        string advisor;
-        string pridePoints;
-    };
     static const int _BOARD_SIZE = 52;
     static const int _MAX_PLAYERS = 2;
     int _player_count;
@@ -31,6 +24,9 @@ private:
     void displayTile(int track, int pos);
     void initializeTiles(int player_index);
     bool isPlayerOnTile(int player_index, int pos, int track);
+        //_player_count is only meant to be used inside class
+    int getPlayerCount(){return _player_count;}
+    void setPlayerCount(int x){_player_count = x;}
     Life players[2];
     Tile _tiles[2][_BOARD_SIZE];
     RandomNum randomNumObject;
@@ -39,7 +35,6 @@ private:
 public:
     Board();
     Board(int player_count);
-    void testForRandomEvent(int dec);
     void setPlayer(Life player, int playerIndex);
     void setTrack(int track, int player_index);
     void displayTrack(int player_index);

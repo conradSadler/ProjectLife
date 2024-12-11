@@ -17,7 +17,6 @@
  */
 int Life:: split(string original, char delimiter, string splitParts[], const int splitPartsSize)
 {
-    //NOTE: NO PASS BY REFRENCE IN ENTIRE PROJECT!!!
     
     int count = 0;
     string edditedOriginal;
@@ -158,7 +157,7 @@ Life::Life(string newName,int newStrength,int newStamina,int newWisdom)
     pAge = 1;
     advisorNumber = -1;
     advisor = "";
-    string attributes[5];
+    string attributes[5];    
 }
 // end of constructors
 

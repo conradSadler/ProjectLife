@@ -16,13 +16,14 @@ class Tile
         string type;
         char color;
         string impact;
+        const static bool used = true;
 
         inline Tile()
         {
-            string type = "";
-            string impact = "";
+            type = "";
+            color= '-';
+            impact = "";
         }
-
 };
 
 #endif

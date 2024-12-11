@@ -19,6 +19,7 @@ class Game
         int calculateWinner();
         Life CubTrainingPlayer(Life player);
         Life PrideLandsPlayer(Life player);
+        
     public:
         Game();
         bool play();

@@ -32,15 +32,19 @@ class RandomEvents
             string pridePoints;
         };
         RandomEvents();
-        void printLists(int i);
         negativeEvent getNegativeEvent(int randomNumberIndex, string path);
         positiveEvent getPositiveEvent(int randomNumberIndex, string path);
+
     private:
         negativeEvent negativeEvents[20];
         positiveEvent positiveEvents[30];
         string temp[4];
         static const int tempSize = 4;
         int split(string original, char delimiter, string splitParts[], const int splitPartsSize);
+            
+            //temp is a private temporary list that should only be used internally
+        string getTemp(int x){ return temp[x];}
+        void setTemp(string t[]){ for(int i = 0; i<4;i++){temp[i]=t[i];} }
 };
 
 #endif

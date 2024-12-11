@@ -22,13 +22,6 @@ string Game::getWinner()
 {
     return winner;
 }
-
-void Game::outputRandomPositiveEvents()
-{
-    Board playingBoard = Board(2);
-    playingBoard.testForRandomEvent(0);
-}
-
 /**
  * This is a private helper function that gets user input and parses it.
  * @return integer from user input
@@ -94,8 +87,7 @@ int Game::playerMenu()
     int userInput = 0;
     while(!validInput)
     {
-        //system("clear");
-        cout << "  --- Player Menu ---  |Options|" << endl;
+        cout << "\n  --- Player Menu ---  |Options|" << endl;
         cout << "Check Player Progress: |   1   |" << endl;
         cout << "Review Character:      |   2   |" << endl;
         cout << "Check Position:        |   3   |" << endl;
@@ -287,8 +279,32 @@ Life Game::menuDecision(int decision, Life player, const Board playingBoard, con
             cout << "You are " << 51-playingBoard.getPlayerPosition(playerIndex) << " tile/s from the pride lands\n" << endl;
             break;
         case 4:  //displays player's advisor
-            cout << "Here is your advisor:" << endl;
+            cout << "Here is your advisor:\n" << endl;
             cout << player.getAdvisor() << endl  << endl;
+            cout << "\nDo you wish to see all advisor options?\n" << endl;
+            cout << "  --- Sub-Menu ---  |Options|" << endl;
+            cout << "Yes:                |   1   |" << endl;
+            cout << "No:                 |   2   |" << endl;
+            cout << "\nEnter Valid Option: " << endl;
+            userInput = parseUserInput();
+            if(userInput == '1')
+            {
+                cout << endl;
+                string fileInput;
+                ifstream inputFile("advisors.txt");
+                if(inputFile.fail())
+                {
+                    cout << "File failed to open" << endl;
+                }
+                else
+                {
+                    while(getline(inputFile,fileInput))  //outputing the contents of advisors.txt
+                    {
+                        cout << fileInput << endl;
+                    }
+                    inputFile.close();
+                }
+            }
             break;
         case 5:  //nothing here becasue player wants to move forward
             break;
@@ -325,9 +341,6 @@ Life Game::PrideLandsPlayer(Life player)
     */
    return player;
 }
-/**
- * This function plays the game. This function is not complete and needs to be borken up becasue it is too long.
- */
 bool Game::play()
 {
     string userInput;

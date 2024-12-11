@@ -12,6 +12,12 @@
 
 class RandomNum
 {
+    private:
+        const static bool var1 = true;
+        const static bool var2 = true;
+        const static bool var3 = true;
+        const static bool var4 = true;
+
     public:
         inline RandomNum()
         {
@@ -21,7 +27,6 @@ class RandomNum
         {
             return rand();
         }
-
 };
 
 #endif

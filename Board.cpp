@@ -25,7 +25,7 @@
 
 /**
  * Description - This function creates each lane(track) of tiles by calling initializeTiles()
- * @return - void
+ * @return void
  */
 void Board::initializeBoard()
 {
@@ -112,8 +112,6 @@ void Board::initializeTiles(int track)
  */
 Board::Board()
 {
-        //INITIALIZE ALL OBJECTS 
-     initializeBoard();
      _player_count = 0;
 
         // Initialize player position
@@ -121,8 +119,10 @@ Board::Board()
      player_position[0][1] = 51;  //default to the end of the board
      player_position[1][0] = -1;
      player_position[1][1] = 51;  //default to the end of the board
-
+    
         // Initialize tiles
+
+    initializeBoard();
 }
 /**
  * This overloaded constructor initializes up to two players at the start of the cub training path 
@@ -242,7 +242,6 @@ void Board::displayTile(int track, int pos)
         cout << color << "| |" << RESET;
     }
 }
-//where player is assumed to be on track one
 /**
  * Description: This function displays a entire path of tiles to the output stream by repededly calling displayTile(int). This function also outputs the tile information that the player player is on.
  *              if both players are on the same tile, the tile information will only be printed out once.
@@ -288,6 +287,17 @@ int Board::spin()
 }
 void Board::calculateWinner()
 {
+    ofstream writeStats("PlayerStats.txt");
+    bool isOpen = true;
+    if(!writeStats.is_open())
+    {
+        cout<< "*** Can not write to file becasue file did not open *** " << endl;
+        isOpen = false;
+    }
+    else
+    {
+        writeStats.clear();
+    }
     double mostPridePoints = INT_MIN;
     bool start = true;
     int pridePointholder = 0;
@@ -295,20 +305,25 @@ void Board::calculateWinner()
     for(int i = 0; i < 2; i++)
     {
         pridePointholder = 0;
-
         if(!(players[i].getName() == ""))
         {
+            cout << "In inner" << endl;
+
             pridePointholder += (players[i].getWisdom() * 1000);
             pridePointholder += (players[i].getStamina() * 1000);
             pridePointholder += (players[i].getStrength() * 1000);
             pridePointholder += players[i].getPridePoints();
-
+            cout << pridePointholder << endl;
             if(pridePointholder > mostPridePoints)
             {
                 mostPridePoints = pridePointholder;
                 winner = "--- Player " + to_string(i+1);
                 winner+= " (" + players[i].getName() + ") has Won the game with an outstanding ";
                 start = false;
+                if(isOpen)
+                {
+                    writeStats << "Player " + to_string(i+1) + " (" + players[i].getName() + ") "+ "had " + to_string(pridePointholder) + " pride points at the end of the game.\n";
+                }
             }
             else if( (pridePointholder == mostPridePoints) && start == false)
             {
@@ -317,8 +332,8 @@ void Board::calculateWinner()
             }
         }
     }
-
-    printf("%s%f pride points! ---\n", winner.c_str(),mostPridePoints);
+    writeStats.close();
+    printf("%s%.0f pride points! ---\n", winner.c_str(),mostPridePoints);
     displayBoard();
 }
 /**
@@ -500,7 +515,6 @@ bool Board::checkForImpact(int player_index)
     int path = player_position[player_index][0];
     int position = player_position[player_index][1];
     int lastPosition = -1;
-    bool display = false;
 
     if(_tiles[path][position].color == 'B')
     {
@@ -512,7 +526,6 @@ bool Board::checkForImpact(int player_index)
     }
     while(lastPosition != player_position[player_index][1])
     {
-        display = false;
         lastPosition = player_position[player_index][1];
             //if not an ordinary tile
         displayBoard();
@@ -533,7 +546,6 @@ bool Board::checkForImpact(int player_index)
                 {
                     player_position[player_index][1]-=10;
                 }
-                display = true;
             }
             else if(_tiles[path][lastPosition].color == 'P')
             {
@@ -543,7 +555,6 @@ bool Board::checkForImpact(int player_index)
             {
                         //getting the last recorded position of player
                 player_position[player_index][1] = players[player_index].pop();
-                display = true;
             }
         }
         else
@@ -554,14 +565,11 @@ bool Board::checkForImpact(int player_index)
             }
         }
     }
+    if(_tiles[path][lastPosition].color == 'B')
+    {
+        return true;
+    }
     return false;
-}
-/**
- * this is a testing function
- */
-void Board::testForRandomEvent(int dec)
-{
-    randomEventsObject.printLists(dec);
 }
 /**
  * This function assigns a random event 50% of the time to non-special tiles (i.e. grass tiles).
