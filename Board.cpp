@@ -25,7 +25,7 @@
 
 /**
  * Description - This function creates each lane(track) of tiles by calling initializeTiles()
- * @return - void
+ * @return void
  */
 void Board::initializeBoard()
 {
@@ -61,7 +61,7 @@ void Board::initializeTiles(int track)
         else if (green_count < 30 && (randomNumObject.getRandNum() % (total_tiles - i) < 30 - green_count)) 
         {
             temp.color = 'G';
-            temp.type = "Roaming the Grasslands...";
+            temp.type = "Roaming the Grasslands...\n";
             temp.impact = "";
             green_count++;
         }
@@ -74,27 +74,27 @@ void Board::initializeTiles(int track)
             {
                 case 0:
                     temp.color = 'B';  // Blue
-                    temp.type = "You’ve found a peaceful oasis!";
+                    temp.type = "You’ve found a peaceful oasis!\n";
                     temp.impact = "1+2+3+|200";
                     break;
                 case 1:
                     temp.color = 'P';  // Pink
-                    temp.type = "Welcome to the land of enrichment!";
+                    temp.type = "Welcome to the land of enrichment!\n";
                     temp.impact = "1+2+3+|300";
                     break;
                 case 2:
                     temp.color = 'N';  // Brown
-                    temp.type = "The Hyenas are on the prowl!";
+                    temp.type = "The Hyenas are on the prowl!\n";
                     temp.impact = "1-|300";
                     break;
                 case 3:
                     temp.color = 'R';  // Red
-                    temp.type = "Uh-oh, you’ve stumbled into the Graveyard!";
+                    temp.type = "Uh-oh, you’ve stumbled into the Graveyard!\n";
                     temp.impact = "1-2-3-|100";
                     break;
                 case 4:
                     temp.color = 'U';  // Purple
-                    temp.type = "Time for a test of wits!";
+                    temp.type = "Time for a test of wits!\n";
                     temp.impact = "riddle";
                     break;
             }
@@ -112,8 +112,6 @@ void Board::initializeTiles(int track)
  */
 Board::Board()
 {
-        //INITIALIZE ALL OBJECTS 
-     initializeBoard();
      _player_count = 0;
 
         // Initialize player position
@@ -121,8 +119,10 @@ Board::Board()
      player_position[0][1] = 51;  //default to the end of the board
      player_position[1][0] = -1;
      player_position[1][1] = 51;  //default to the end of the board
-
+    
         // Initialize tiles
+
+    initializeBoard();
 }
 /**
  * This overloaded constructor initializes up to two players at the start of the cub training path 
@@ -242,7 +242,6 @@ void Board::displayTile(int track, int pos)
         cout << color << "| |" << RESET;
     }
 }
-//where player is assumed to be on track one
 /**
  * Description: This function displays a entire path of tiles to the output stream by repededly calling displayTile(int). This function also outputs the tile information that the player player is on.
  *              if both players are on the same tile, the tile information will only be printed out once.
@@ -288,6 +287,17 @@ int Board::spin()
 }
 void Board::calculateWinner()
 {
+    ofstream writeStats("PlayerStats.txt");
+    bool isOpen = true;
+    if(!writeStats.is_open())
+    {
+        cout<< "*** Can not write to file becasue file did not open *** " << endl;
+        isOpen = false;
+    }
+    else
+    {
+        writeStats.clear();
+    }
     double mostPridePoints = INT_MIN;
     bool start = true;
     int pridePointholder = 0;
@@ -295,20 +305,25 @@ void Board::calculateWinner()
     for(int i = 0; i < 2; i++)
     {
         pridePointholder = 0;
-
         if(!(players[i].getName() == ""))
         {
+            cout << "In inner" << endl;
+
             pridePointholder += (players[i].getWisdom() * 1000);
             pridePointholder += (players[i].getStamina() * 1000);
             pridePointholder += (players[i].getStrength() * 1000);
             pridePointholder += players[i].getPridePoints();
-
+            cout << pridePointholder << endl;
             if(pridePointholder > mostPridePoints)
             {
                 mostPridePoints = pridePointholder;
                 winner = "--- Player " + to_string(i+1);
                 winner+= " (" + players[i].getName() + ") has Won the game with an outstanding ";
                 start = false;
+                if(isOpen)
+                {
+                    writeStats << "Player " + to_string(i+1) + " (" + players[i].getName() + ") "+ "had " + to_string(pridePointholder) + " pride points at the end of the game.\n";
+                }
             }
             else if( (pridePointholder == mostPridePoints) && start == false)
             {
@@ -317,8 +332,8 @@ void Board::calculateWinner()
             }
         }
     }
-
-    printf("%s%f pride points! ---\n", winner.c_str(),mostPridePoints);
+    writeStats.close();
+    printf("%s%.0f pride points! ---\n", winner.c_str(),mostPridePoints);
     displayBoard();
 }
 /**
@@ -500,7 +515,6 @@ bool Board::checkForImpact(int player_index)
     int path = player_position[player_index][0];
     int position = player_position[player_index][1];
     int lastPosition = -1;
-    bool display = false;
 
     if(_tiles[path][position].color == 'B')
     {
@@ -512,7 +526,6 @@ bool Board::checkForImpact(int player_index)
     }
     while(lastPosition != player_position[player_index][1])
     {
-        display = false;
         lastPosition = player_position[player_index][1];
             //if not an ordinary tile
         displayBoard();
@@ -533,7 +546,6 @@ bool Board::checkForImpact(int player_index)
                 {
                     player_position[player_index][1]-=10;
                 }
-                display = true;
             }
             else if(_tiles[path][lastPosition].color == 'P')
             {
@@ -543,7 +555,6 @@ bool Board::checkForImpact(int player_index)
             {
                         //getting the last recorded position of player
                 player_position[player_index][1] = players[player_index].pop();
-                display = true;
             }
         }
         else
@@ -554,14 +565,11 @@ bool Board::checkForImpact(int player_index)
             }
         }
     }
+    if(_tiles[path][lastPosition].color == 'B')
+    {
+        return true;
+    }
     return false;
-}
-/**
- * this is a testing function
- */
-void Board::testForRandomEvent(int dec)
-{
-    randomEventsObject.printLists(dec);
 }
 /**
  * This function assigns a random event 50% of the time to non-special tiles (i.e. grass tiles).
@@ -574,18 +582,23 @@ void Board::checkForRandomEvent(int player_index)
     {
         if(randomNumObject.getRandNum()%2 == 0) //positive outcome
         {
-
            if(player_position[player_index][0] == 0) //event for the cub training path (path '0')
            {
-                cout << "*** Random Event Happened ***" << endl;
-                cout << randomEventsObject.getPositiveEvent(randomNumObject.getRandNum()%30,"0").eventName << endl;  //outputing the random event that happened
-                players[player_index].setPridePoints(stoi(randomEventsObject.getPositiveEvent(randomNumObject.getRandNum()%30,"0").pridePoints) + players[player_index].getPridePoints());
+                cout << "\n*** Random Event Happened ***\n" << endl;
+                RandomEvents::positiveEvent thePosEvent = randomEventsObject.getPositiveEvent(randomNumObject.getRandNum()%30,"0"); //stores returned struct from method
+
+                cout << thePosEvent.eventName << endl;  //outputing the random event that happened
+                cout << "\nYou gained " << thePosEvent.pridePoints << " Pride Points! \n" << endl;
+                players[player_index].setPridePoints(stoi(thePosEvent.pridePoints) + players[player_index].getPridePoints());
            }
            else //event for the pride lands path (path '1')
            {
-                cout << "*** Random Event Happened ***" << endl;
-                cout << randomEventsObject.getPositiveEvent(randomNumObject.getRandNum()%30,"1").eventName << endl;
-                players[player_index].setPridePoints(stoi(randomEventsObject.getPositiveEvent(randomNumObject.getRandNum()%30,"1").pridePoints) + players[player_index].getPridePoints());
+                cout << "\n*** Random Event Happened ***\n" << endl;
+                RandomEvents::positiveEvent thePosEvent = randomEventsObject.getPositiveEvent(randomNumObject.getRandNum()%30,"1");  //stores returned struct from method
+                
+                cout << thePosEvent.eventName << endl;
+                cout << "\nYou gained " << thePosEvent.pridePoints << " Pride Points! \n" << endl;
+                players[player_index].setPridePoints(stoi(thePosEvent.pridePoints) + players[player_index].getPridePoints());
            }
 
         }
@@ -593,10 +606,12 @@ void Board::checkForRandomEvent(int player_index)
         {
            if(player_position[player_index][0] == 0)  //event for the cub training path (path '0')
            {
-                cout << "*** Random Event Happened ***" << endl;
-                cout << randomEventsObject.getNegativeEvent(randomNumObject.getRandNum()%20,"0").eventName << endl;  //outputing the random event that happened
+                cout << "\n*** Random Event Happened ***\n" << endl;
+                RandomEvents::negativeEvent theNegEvent = randomEventsObject.getNegativeEvent(randomNumObject.getRandNum()%20,"0"); //stores returned struct from method
+
+                cout << theNegEvent.eventName << endl;  //outputing the random event that happened
                 
-                if(players[player_index].getAdvisorNumber() == stoi(randomEventsObject.getNegativeEvent(randomNumObject.getRandNum()%20,"0").advisor))  //determining if your advisor will protect you
+                if(players[player_index].getAdvisorNumber() == stoi(theNegEvent.advisor))  //determining if your advisor will protect you
                 {
                     cout << "\nYour Advisor protected you!\n" << endl;
                 }
@@ -604,7 +619,7 @@ void Board::checkForRandomEvent(int player_index)
                 {
                     int pridepoints = players[player_index].getPridePoints();
                         //formula below: player's current pride points + negative number
-                    players[player_index].setPridePoints(pridepoints + stoi(randomEventsObject.getNegativeEvent(randomNumObject.getRandNum()%20,"0").pridePoints));
+                    players[player_index].setPridePoints(pridepoints + stoi(theNegEvent.pridePoints));
 
                     cout << "\nYou lost " << pridepoints - players[player_index].getPridePoints() << " Pride Points! \n" << endl;
 
@@ -614,16 +629,17 @@ void Board::checkForRandomEvent(int player_index)
            else  //event for the pride lands path (path '1')
            {
                 cout << "*** Random Event Happened ***" << endl;
-                cout << randomEventsObject.getNegativeEvent(randomNumObject.getRandNum()%20,"1").eventName << endl;   //outputing the random event that happened
+                RandomEvents::negativeEvent theNegEvent = randomEventsObject.getNegativeEvent(randomNumObject.getRandNum()%20,"1"); //stores returned struct from method
+                cout << theNegEvent.eventName << endl;   //outputing the random event that happened
                 
-                if(players[player_index].getAdvisorNumber() == stoi(randomEventsObject.getNegativeEvent(randomNumObject.getRandNum()%20,"1").advisor))  //determining if your advisor will protect you
+                if(players[player_index].getAdvisorNumber() == stoi(theNegEvent.advisor))  //determining if your advisor will protect you
                 {
                     cout << "\nYour Advisor protected you!\n" << endl;
                 }
                 else  //advisor did not protect you becasue you had the wrong or no advisor
                 {
                     int pridepoints = players[player_index].getPridePoints();
-                    players[player_index].setPridePoints(pridepoints + stoi(randomEventsObject.getNegativeEvent(randomNumObject.getRandNum()%20,"1").pridePoints));
+                    players[player_index].setPridePoints(pridepoints + stoi(theNegEvent.pridePoints));
 
                     cout << "\nYou lost " << pridepoints - players[player_index].getPridePoints() << " Pride Points! \n" << endl;
 

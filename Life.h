@@ -16,7 +16,7 @@ using namespace std;
  * This class focuses on storing all attributes relevent to a player in the game
  */
 
-class Life:public PlayerMetaData //is-implemented-in-terms-of relationship
+class Life:private PlayerMetaData //is-implemented-in-terms-of relationship
 {
     private:
         string pName;
@@ -27,7 +27,7 @@ class Life:public PlayerMetaData //is-implemented-in-terms-of relationship
         int pStrength,pStamina,pWisdom,pAge,advisorNumber;
         int split(string original, char delimiter, string splitParts[], const int splitPartsSize);
         RandomNum randomNumObject;
-        void setAdvisorNumber();  //set to private becasue set Advisor number should not be changed outside of setAdvisor()
+        void setAdvisorNumber(int x) {advisorNumber = x;}  //set to private becasue set Advisor number should not be changed outside of setAdvisor()
         void tileImpactExtended(string tileImp);
 
     public:
@@ -54,6 +54,14 @@ class Life:public PlayerMetaData //is-implemented-in-terms-of relationship
         void printStats();
         bool displayCharacters();
         bool setCharacter(string);
+        inline void push(int i)
+        {
+            PlayerMetaData::push(i);
+        }
+        inline int pop()
+        {
+            return PlayerMetaData::pop();
+        }
 };
 
 #endif

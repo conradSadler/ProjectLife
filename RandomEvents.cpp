@@ -96,24 +96,6 @@ RandomEvents::RandomEvents()
         inputFile.close();
     }
 }
-
-void RandomEvents::printLists(int i)  //tester function
-{
-    if(i == 0)
-    {
-        for(int i = 0; i < 30; i++)
-        {
-            cout << RandomEvents::positiveEvents[i].eventName << endl;
-        }
-    }
-    else
-    {
-        for(int i = 0; i < 20; i++)
-        {
-            cout << RandomEvents::negativeEvents[i].eventName << endl;
-        }
-    }
-}
 /**
  * This function returns a positive event struct from the struct array with matching path as the path argument
  * @param randomNumberIndex is a random number between [0,30]

@@ -15,16 +15,18 @@ class PlayerMetaData
 {
     private:
         std::vector<int> pastPositions;
-
+            //setting and getting vector should not be allowed
         std::vector<int> getVector();
         void setVector(std::vector<int>);
+
     public:
 
-        inline void push(int i)
+        PlayerMetaData(){std::vector<int> pastPositions;}
+        virtual inline void push(int i)
         {
             pastPositions.push_back(i);
         }
-        inline int pop()
+        virtual inline int pop()
         {
             if(pastPositions.size() == 0)
             {
