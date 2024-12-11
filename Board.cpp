@@ -55,7 +55,7 @@ void Board::initializeTiles(int track)
         } 
         else if (i == 0) 
         {
-                // Set the last tile as Orange for "Pride Rock"
+                // Set the first tile
             temp.color = 'Y';
         } 
         else if (green_count < 30 && (randomNumObject.getRandNum() % (total_tiles - i) < 30 - green_count)) 
